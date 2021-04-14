@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  ssms:
+    image: mcr.microsoft.com/mssql/server:2019-CU10-ubuntu-20.04
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssword2
+    network_mode: bridge
+    ports:
+      - 1433:1433
+    volumes:
+      - "~/docker_volumes/mssql/data:/var/opt/mssql/data"
+    user: root
