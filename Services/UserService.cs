@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -134,13 +135,15 @@ namespace Authentication.Services
         {
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
+            // var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
             var claims = await _userManager.GetClaimsAsync(user);
+            var cert = new X509Certificate2("localhost.pfx", "1234");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new X509SigningCredentials(cert)
+                //new SigningCredentials(new X509SecurityKey(cert), SecurityAlgorithms.RsaSha256Signature)
             };
 
             // This comment can use instead SecurityTokenDescriptor.

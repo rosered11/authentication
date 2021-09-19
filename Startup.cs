@@ -17,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,6 +57,9 @@ namespace Authentication
             })
             .AddJwtBearer(jwt => {
                 var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
+                var cert = new X509Certificate2("localhost.pfx", "1234");
+                var keyCert = new X509SecurityKey(cert);
+                
                 //jwt.SaveToken = true;
                 jwt.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -63,7 +67,7 @@ namespace Authentication
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true // this will validate the 3rd part of the jwt token using the secret that we added in the appsettings and verify we have generated the jwt token
-                    ,IssuerSigningKey = new SymmetricSecurityKey(key)
+                    ,IssuerSigningKey = new X509SecurityKey(cert)
                 };
             });
             #endregion

@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -14,7 +15,13 @@ namespace Authentication
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                        .UseKestrel(options => {
+                            options.Listen(IPAddress.Loopback, 5002, listnerOption => {
+                                listnerOption.UseHttps("localhost.pfx", "1234");
+                            });
+                        })
+                        .UseStartup<Startup>();
                 });
     }
 }
