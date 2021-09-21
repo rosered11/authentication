@@ -15,6 +15,8 @@ namespace Authentication.Services
 {
     public class UserService
     {
+        private const string ISSUER = "http://localhost/auth";
+        private const string AUDIENCE = "http://localhost/audian";
         private readonly UserManager<ApplicationUser> _userManager;
 
         public UserService(UserManager<ApplicationUser> userManager)
@@ -138,11 +140,15 @@ namespace Authentication.Services
             // var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
             var claims = await _userManager.GetClaimsAsync(user);
             var cert = new X509Certificate2("localhost.pfx", "1234");
+            var time = DateTime.UtcNow.AddDays(7);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new X509SigningCredentials(cert)
+                Expires = time,
+                SigningCredentials = new X509SigningCredentials(cert),
+                Issuer = ISSUER,
+                IssuedAt = time,
+                Audience = AUDIENCE
                 //new SigningCredentials(new X509SecurityKey(cert), SecurityAlgorithms.RsaSha256Signature)
             };
 
